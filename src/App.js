@@ -46,14 +46,41 @@ class App {
     return moveCount;
   }
 
+  printRace(cars){
+    for ( const car of cars){
+      let bars = '';
+      for ( let i = 0; i< car.position; i++){
+        bars += '-';
+      }
+      MissionUtils.Console.print(`${car.name} : ${bars}`);
+    }
+    MissionUtils.Console.print('\n');
+  }
+
   //model
-  
+  race(cars){
+    for ( const car of cars){
+      if ( MissionUtils.Random.pickNumberInRange(0,9) >= 4){
+        car.position++;
+      }
+    }
+  }
+
+  findFinalWinner(cars){
+    
+  }
 
 
   //controller
   async run() {
     const cars = await this.carInput();
     const moveCount = await this.moveInput();
+    
+    MissionUtils.Console.print('\n실행결과');
+    for ( let i = 0; i< moveCount; i++){
+      this.race(cars);//경주
+      this.printRace(cars);//출력
+    }
 
 
   }
