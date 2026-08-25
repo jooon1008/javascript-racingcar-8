@@ -1,9 +1,10 @@
 import { MissionUtils } from '@woowacourse/mission-utils';
 
 class App {
+  //validation
+  validateCarInput(input){
+    const splitted = input.split(',');
 
-  //view
-  validateCarInput(splitted){
     for (const name of splitted) {
       if (!name.trim()) {
         throw new Error('[ERROR] 자동차 이름은 비어 있을 수 없습니다.');
@@ -23,29 +24,22 @@ class App {
     }
   }
 
+  //view
+
+  //차 이름 입력
   async carInput(){
     const input = await MissionUtils.Console.readLineAsync('경주할 자동차 이름을 입력하세요.( 이름은 쉼표 (,) 기준으로 구분)\n');
-    const splitted = input.split(',');
-    const cars = new Array();
-    //검증
-    this.validateCarInput(splitted);
 
-    for (const name of splitted) {
-      cars.push({name: name , position: 0});
-    }
-
-    return cars;
+    return input;
   }
 
+  //이동 횟수 입력
   async moveInput(){
     const input = await MissionUtils.Console.readLineAsync('시도할 횟수는 몇 회인가요?\n');
-    //검증
-    this.validateMoveInput(input);
-
-    const moveCount = parseInt(input);
-    return moveCount;
+    return input;
   }
 
+  //각 경기 결과 출력
   printRace(cars){
     for ( const car of cars){
       let bars = '';
@@ -57,7 +51,26 @@ class App {
     MissionUtils.Console.print('\n');
   }
 
+  //최종 우승자 출력
+  printFinalWinner(winner){
+    MissionUtils.Console.print(`최종 우승자 : ${winner.join(', ')}`);
+  }
+
   //model
+
+  //자동차 객체 배열 생성
+  createCars(input){
+    const splitted = input.split(',');
+    const cars = new Array();
+
+    for (const name of splitted) {
+      cars.push({name: name , position: 0});
+    }
+
+    return cars;
+  }
+
+  //랜덤값으로 포지션 증가
   race(cars){
     for ( const car of cars){
       if ( MissionUtils.Random.pickNumberInRange(0,9) >= 4){
@@ -66,23 +79,35 @@ class App {
     }
   }
 
+  //최종 우승자 탐색
   findFinalWinner(cars){
-    
-  }
+    const maxPosition = Math.max(...cars.map((car) => car.position));
+    const winner = new Array();
 
+    cars.forEach(car => {
+      if ( car.position === maxPosition) winner.push(car.name);
+    });
+    return winner;
+  }
 
   //controller
   async run() {
-    const cars = await this.carInput();
-    const moveCount = await this.moveInput();
+    const carInput = await this.carInput();
+    this.validateCarInput(carInput)//검증
+    const cars = this.createCars(carInput);
+
+    const moveInput = await this.moveInput();
+    this.validateMoveInput(moveInput);//검증
+    const moveCount = parseInt(moveInput);
     
     MissionUtils.Console.print('\n실행결과');
     for ( let i = 0; i< moveCount; i++){
       this.race(cars);//경주
       this.printRace(cars);//출력
     }
-
-
+    
+    const finalWinner = this.findFinalWinner(cars);
+    this.printFinalWinner(finalWinner);
   }
 }
 
