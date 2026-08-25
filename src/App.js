@@ -1,29 +1,7 @@
 import { MissionUtils } from '@woowacourse/mission-utils';
+import Validator from './Validator.js';
 
 class App {
-  //validation
-  validateCarInput(input){
-    const splitted = input.split(',');
-
-    for (const name of splitted) {
-      if (!name.trim()) {
-        throw new Error('[ERROR] 자동차 이름은 비어 있을 수 없습니다.');
-      }
-      if (/\s/.test(name)){
-        throw new Error('[ERROR] 자동차 이름은 공백이 포함될 수 없습니다.');
-      }
-      if ( name.length > 5){
-        throw new Error('[ERROR] 자동차 이름은 5글자 이하여야 합니다.');
-      }
-    }
-  }
-
-  validateMoveInput(input){
-    if (!/^[1-9]\d*$/.test(input)){
-      throw new Error('[ERROR] 시도할 횟수는 양수로만 구성되어야 합니다.');
-    }
-  }
-
   //view
 
   //차 이름 입력
@@ -93,11 +71,11 @@ class App {
   //controller
   async run() {
     const carInput = await this.carInput();
-    this.validateCarInput(carInput)//검증
+    Validator.validateCarInput(carInput)//검증
     const cars = this.createCars(carInput);
 
     const moveInput = await this.moveInput();
-    this.validateMoveInput(moveInput);//검증
+    Validator.validateMoveInput(moveInput);//검증
     const moveCount = parseInt(moveInput);
     
     MissionUtils.Console.print('\n실행결과');
