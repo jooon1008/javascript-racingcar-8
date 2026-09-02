@@ -1,4 +1,4 @@
-import App from "./App.js";
+import RaceGameController from "./RaceGameController.js";
 
-const app = new App();
-await app.run();
+const controller = new RaceGameController();
+await controller.start();
